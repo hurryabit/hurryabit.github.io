@@ -1,8 +1,10 @@
 ---
 title: "Stack-safety for free?"
-date: 2021-11-15
+description: "Abusing generators to make recursive functions iterative"
+date: 2021-11-13
 category: blog
 tags: rust
+classes: wide
 ---
 
 Imagine you have implemented an algorithm which contains a complex recursive
