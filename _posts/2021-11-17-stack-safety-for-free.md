@@ -1,6 +1,5 @@
 ---
 title: "Stack-safety for free?"
-date: 2021-11-13
 category: Blog
 tags: Rust Python JavaScript PLDesign
 # classes: wide
@@ -65,7 +64,7 @@ Despite some minor boilerplate introduced by Rust's syntax for generators, namel
 The final piece of the technique is the higher-order function `recurse`. It is important to understand that `recurse` cannot only handle `triangular` but rather all recursive functions of some type `fn(A) -> B`, where `A` doesn't contain any mutable references. Roughly speaking, `recurse` implements the general approach of "simulate the call stack in the heap and run one big loop" mentioned above. The elements of this simulated stack are partially run generators that have been produced by a generator function `f` passed to `recurse`. In our example, `f` is the generator function we've obtained from `triangular` by replacing each recursive call with `yield`. One can think of this construction as `f` "returning" to the loop instead of calling itself recursively and the loop orchestrating the proper flow of calls to `f`.
 
 ```rust
-pub fn recurse<Arg, Res, Gen>(
+fn recurse<Arg, Res, Gen>(
     f: impl Fn(Arg) -> Gen
 ) -> impl Fn(Arg) -> Res
 where
@@ -117,11 +116,10 @@ The following links provide uninterrupted and self-contained versions of the cod
 
 * [Rust Playground][playground_rs]
 * [Python Playground][playground_py]
-* [JSFiddle][playground_js]
+* [JavaScript Playground][playground_js]
 * [GitHub Gist with Rust code][gist_rs]
 * [GitHub Gist with Python code][gist_py]
 * [GitHub Gist with JavaScript code][gist_js]
-
 
 
 [^stack_overflow]: While I worked on the smart contract language [Daml][daml] at [Digital Asset][digital_asset], we had to deal with so many stack overflows caused by recursive traversals of deep abstract syntax trees in execution environments we had no control over that it has become almost second nature to me to blame the recursion and not the stack limits for the overflows.
@@ -138,9 +136,9 @@ The following links provide uninterrupted and self-contained versions of the cod
 [ackermann_function]: https://en.wikipedia.org/wiki/Ackermann_function
 [daml]: https://daml.com
 [digital_asset]: https://www.digitalasset.com
-[playground_rs]: xxx
-[playground_py]: xxx
-[playground_js]: xxx
+[playground_rs]: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=e65754f88ec096383ea697740de285bc
+[playground_py]: https://www.online-python.com/yhrfWJkqz3
+[playground_js]: https://www.typescriptlang.org/play?strict=false&noImplicitAny=false&strictNullChecks=false#code/PTAEBUAsEsGdQA4BsCGBPA5gJwPYFcA7AE1AGMcCAXFaA+SyAU1ACkUA3FAZVK2gUqh2jLLGgVQOAGagGzckWZTcAW1lNQAIyQ4MiHLEoAoEKEiVKCWAC4QkPFixoUm6JQB0GN-c3vxwbV1gQxRSAGsAWlgUKUZKNAipHCxErEZGYCMpQlJKcQJZPhQCDDxULAAKAgBKUABvI1Am0GgZKtAAXg7QAAZahubB0DTKBwKegG5G5oBfUEYkWGYBoaaRsdACgGpC6GLS8vaI0ABGaqnBmaMrrJy8iTTSByWKqX7ppuyCXPzQFTwAPpSCooLAYd6rJrkOiCELhTqgADaAF0LpCkHEyA40lQEcDQeC0asMYI0vBuoRFFJaIwiFMPkMAO4wDGgCqULB4RgQyGDaGGeqgIgURgAGiEKCQXNAc26T0cjCo7gIjAAHpQKmTzgzea02QBCYUqnm81ZwsLuBB4WCQCrynGUbWmyH2xWCbrAzhS7lE53NMkIymMakquk6yFzBZLerh516irm9wYkoMUAAPl6Jr9q1duO6iYQOAQFSd2chAe6Xq5vuzkcWy1jZfWWAKVcYNb9V1rja7syMDObBX+QKmN35gg5exKZVBAOisQRj2ejFed3yACo2TUY4N4wUupmd+W4htJgy69GVqtB5tQDsKmhoAsSEdTtVS00rjNtUZx6AADIAIIAEoAOIAKIIicPQ9ACMFnvyOAYu4pAYqCJb0vGk77DOWBzjEK5AWB4G1Pq3RERBoCbhUFGQTsZygGAABMWYMLgjKgOBjjJBUABEAAG2HTuU+GxPxZA4CoVqULSoCMrgJQSt67i8dqVyIchOgYHxglFMJs7zow4mQCg8AEDggg4MIWBSDojKyW48CJqp9IaYwSa6DpQkHKC4mMtASBIJI1m2TgHGOaA5qRTgFDuHFLlGByaBHk03m4TRIEQR+6jsZx3GVAJaXlMZpmbBZwUiKF9kkBFzlqWQKCUKQkBsmqpBZvGbXuCojCwNEGDubQqF4IosB8aQkpBeaqlZnyFCwEh7laV5ek+VgJXwFZlV2Q5lBOdQ4QqdU57zPWKVDGxYXzKqpC+l+RhAA
 [gist_rs]: https://gist.github.com/hurryabit/972be7d92fa7359ebb068b29d9e95a3b
-[gist_py]: xxx
-[gist_js]: xxx
+[gist_py]: https://gist.github.com/hurryabit/a7213d9c8d059c31f51686bd66691592
+[gist_js]: https://gist.github.com/hurryabit/76a59348e9f4445f82d93fa75cba2582
