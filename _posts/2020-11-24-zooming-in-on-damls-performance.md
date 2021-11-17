@@ -1,7 +1,7 @@
 ---
 title: "Zooming in on DAML's performance"
-category: blog
-tags: daml haskell link
+category: Link
+tags: Daml Perf
 link: https://daml.com/blog/engineering/zooming-in-on-daml-s-performance
 ---
 

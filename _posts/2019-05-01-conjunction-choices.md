@@ -1,7 +1,7 @@
 ---
 title: "And now all together: an introduction to conjunction choices"
-category: blog
-tags: daml haskell link
+category: Link
+tags: Daml
 link: https://daml.com/blog/engineering/and-now-all-together-an-introduction-to-conjunction-choices
 ---
 

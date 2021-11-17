@@ -1,7 +1,7 @@
 ---
 title: "The only valid smart contract is a voluntary one — easier said than done"
-category: blog
-tags: daml haskell link
+category: Link
+tags: Daml
 link: https://daml.com/blog/engineering/the-only-valid-smart-contract-is-a-voluntary-one-easier-said-than-done
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Daml does yoga: an introduction to flexible controllers"
-category: blog
-tags: daml haskell link
+category: Link
+tags: Daml
 link: https://daml.com/blog/engineering/daml-does-yoga-an-introduction-to-flexible-controllers
 ---
 

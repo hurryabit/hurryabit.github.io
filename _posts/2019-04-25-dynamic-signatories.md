@@ -1,7 +1,7 @@
 ---
 title: "Removing the limits on signatories"
-category: blog
-tags: daml haskell link
+category: Link
+tags: Daml
 link: https://daml.com/blog/engineering/removing-the-limits-on-signatories
 ---
 

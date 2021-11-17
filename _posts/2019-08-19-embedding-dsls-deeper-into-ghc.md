@@ -1,7 +1,7 @@
 ---
 title: "Talk: Embedding DSLs deeper into GHC"
-category: blog
-tags: daml haskell talk link
+category: Link
+tags: Daml Haskell PLDesign Talk
 link: https://www.youtube.com/watch?v=mQulFrOp0Rg
 ---
 

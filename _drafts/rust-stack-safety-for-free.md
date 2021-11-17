@@ -1,110 +1,35 @@
 ---
 title: "Stack-safety for free?"
-description: "Abusing generators to make recursive functions iterative"
 date: 2021-11-13
-category: blog
-tags: rust
-classes: wide
+category: Blog
+tags: Rust Python JavaScript PLDesign
+# classes: wide
+related: false
 ---
 
-Imagine you have implemented an algorithm which contains a complex recursive
-function, such as
-[Tarjan's strongly connected components algorithm][tarjans_algorithm]
-with its depth-first search, and your inputs have become so big that the
-recursive calls blow the stack. Although there is a well-understood algorithm
-that can transform any recursive function into an iterative implementation,
-actually carrying out this transformation is quite tedious and error-prone.
+**tl;dr.** I demonstrate how generators/coroutines can be (ab)used to transform any recursive function into an iterative function with _nearly zero_ code changes. I explain the technique using a small example written in Rust, which can also be found on the [Rust Playground][playground_rs] and in a [GitHub Gist][gist_rs]. You can find links to implementations of the same example in Python and JavaScript in the [Links](#links) section at the end.
 
-In this Gist, I sketch a general technique for performing this transformation
-with almost no code changes at all. This technique works in any programming
-language which supports [generators][generator] or [coroutines][coroutine].
-I provide a model implementation in Rust nightly.
+If you are in a rush, you could skip the introduction and immediately jump to the [implementation](#implementation).
 
-The technique consists of two steps only:
 
-1. replace every recursive call with a `yield`, and
-1. wrap the resulting generator in the higher-order function `recurse`.
+# Introduction
 
-The result of `recurse` will then be a function that behaves like the original
-recursive function and is stack-safe at the same time. The code below
-illustrates how to transform the recursive function `triangular`, which
-computes triangular numbers, into the equivalent but stack-safe function
-`triangular_safe`. Although `triangular` is surely not the sort of function
-where one would resort to general techniques, its simplicity allows us to
-focus on the technique itself rather than being distracted by the complexity
-of the recursive function.
+During my recent preparation for coding interviews, I came across a problem where part of the solution was to determine all strongly connected components of a directed graph. I decided to compute these components using [Tarjan's algorithm][tarjans_algorithm], which is basically a glorified depth-first search through the graph. Unfortunately for me, the test inputs on the coding platform I used were so large that my _recursive_ implementation caused a stack overflow. Since I had no control over the execution environment, simply increasing the stack limits was not an option.[^stack_overflow] Thus, I started to re-implement the depth-first search in an iterative fashion.
 
-The code below also provides an implementation of the higher-order function
-`recurse`. Rougly speaking, `recurse` maintains a stack of partially run
-generators that resembles the call stack of the original recursive version.
-The `main` function demonstrates how the first function blows the stack when
-given a large input while the second does not.
+The general approach for transforming recursion into iteration is to simulate the call stack in the heap and properly manipulate this simulated stack in one big loop until the stack is empty. The actual loop body can be derived from the original recursive implementation in a very systematic way that can also be very tedious. While I was semi-systematically struggling through this tedium, I got annoyed by the fact that I as a human was doing something a computer would be so much better at than me. I stepped away from the problem and a few instants later it just struck me: What I was trying to do by hand is pretty much exactly the same a compiler has to do when desugaring [generators][generators] (or [coroutines][coroutines]) into simpler language constructs.
 
-The key insight behind the technique is the fact that the generic algorithm
-for rewriting recursion into a loop performs almost exactly the same code
-transformation that a compiler does when desugaring generators. Thus, instead
-of rewriting our code by hand, we can simply let the compiler do it for us.
+At this moment, my problem turned from a quite annoying one into a really exciting one: Can I actually (ab)use the compiler's capabilities regarding generators to serve my goal of transforming recursion into iteration? I quickly fired up my Python IDE, read through the [docs for generators][generators_docs_py], and hacked a little bit.[^hacking_python] A couple of minutes later, I had a small prototype demonstrating my idea works in principle. I was pretty hyped!
 
-The implementation below does neither support functions with multiple
-arguments nor mutual recursion. Both features are conceptually straightforward
-to add; the former by packing multiple arguments into a single tuple, the
-latter by yielding a pair of the function to call and the argument to call it
-with.
+Since then, I've played with the idea a lot. I got more complex and bigger examples to work, tried it out in other programming languages, thought about mutually recursive functions, looked into mutability and ownership, ran a lot of benchmarks, and figured out how to handle tail calls efficiently. I also started to wonder if this idea is actually well-known and I'm just reinventing the wheel or if I'm onto something. Despite my best efforts, I could not find any evidence of this idea anywhere. That's why we're here now! Although there's a lot to write about, this blog post focuses solely on the basic idea. I'll talk about everything else in future blog posts.
 
-In the case of Rust, it is not yet clear how this technique interacts with
-the ownership system in the presence of more complex types and captured
-variables. I will keep playing with the idea to find out. Another important
-question concerns performance. I still have to conduct extensive benchmarks to
-see how the 'yield & recurse' version performs in comparison to both the
-original function as well as a hand-written iterative version of some complex
-recursive function. The depth-first search in Tarjan's aforementioned
-algorithm seems to be a good candidate for such benchmarks.
 
-My ultimate vision for this little project is to create a Rust package with a
-procedural attribute macro `#[stack_safe]` that we can slap on any recursive
-function to make it stack-safe using this technique or a variation of it.
-If I, or we, manage to achieve good performance with this approach, I would be
-tempted to describe the outcome as "stack-safety for free".
+# Implementation
 
-If you have read so far, I would like to thank you for taking the time. If
-you have any thoughts on this idea, please leave a comment and I will do my
-best to get back to you.
+The basic idea behind the technique to transform recursion into iteration is surprisingly simple and can be implemented in any language that supports generators. I've chosen to use Rust here since convincing its very rigid type and borrow checkers of my idea increases me confidence that the idea is sound. In fact, we need to use [Rust nightly][rust_nightly] because generators are not stable yet.
 
-Thank you,
-
-Martin.
+We use a small recursive function `triangular`, which computes [triangular numbers][triangular_numbers], as an example to demonstrate the technique. Although this is surely not the sort of function where one would resort to general techniques, its simplicity allows us to focus on the transformation itself rather than being distracted by unrelated complexity. An uninterrupted and self-contained version of the code shown in this blog post can be found on the [Rust Playground][playground_rs] in a [GitHub Gist][gist_rs].
 
 ```rust
-#![feature(generators, generator_trait)]
-use std::ops::{Generator, GeneratorState};
-use std::pin::Pin;
-
-fn recurse<Arg, Res, Gen>(f: impl Fn(Arg) -> Gen) -> impl Fn(Arg) -> Res
-where
-    Res: Default,
-    Gen: Generator<Res, Yield = Arg, Return = Res> + Unpin,
-{
-    move |arg: Arg| {
-        let mut stack = vec![f(arg)];
-        let mut res = Res::default();
-
-        while let Some(mut gen) = stack.pop() {
-            match Pin::new(&mut gen).resume(res) {
-                GeneratorState::Yielded(arg) => {
-                    stack.push(gen);
-                    stack.push(f(arg));
-                    res = Res::default();
-                }
-                GeneratorState::Complete(res1) => {
-                    res = res1;
-                }
-            }
-        }
-
-        res
-    }
-}
-
 fn triangular(n: u64) -> u64 {
     if n == 0 {
         0
@@ -112,7 +37,16 @@ fn triangular(n: u64) -> u64 {
         n + triangular(n - 1)
     }
 }
+```
 
+In order to transform `triangular` into an iterative function, we only need to perform two simple steps:
+
+1. Replace every recursive call to `triangular` by a `yield` expression.
+1. Wrap the resulting _generator function_ into the higher-order function `recurse`, which we will discuss below.
+
+The result of this transformation is the function `triangular_safe` below, which computes the same values as `triangular` but does so without overflowing the stack, even for large input values `n`. In other words, `triangular_safe` is a stack-safe version of `triangular`.
+
+```rust
 fn triangular_safe(n: u64) -> u64 {
     recurse(|n: u64| {
         move |_: u64| {
@@ -124,18 +58,89 @@ fn triangular_safe(n: u64) -> u64 {
         }
     })(n)
 }
+```
 
-fn main() {
-    const LARGE: u64 = 1_000_000;
+Despite some minor boilerplate introduced by Rust's syntax for generators, namely the `move |_: u64| { ... }` part, it should be quite clear how we got from `triangular` to `triangular_safe`. Ultimately, this transformation could be implemented by a [procedural attribute macro][proc_attr_macro] in Rust.
 
-    assert_eq!(triangular_safe(LARGE), LARGE * (LARGE + 1) / 2);
-    println!("The safe 'Yield & Recurse' version has not blown the stack!");
+The final piece of the technique is the higher-order function `recurse`. It is important to understand that `recurse` cannot only handle `triangular` but rather all recursive functions of some type `fn(A) -> B`, where `A` doesn't contain any mutable references. Roughly speaking, `recurse` implements the general approach of "simulate the call stack in the heap and run one big loop" mentioned above. The elements of this simulated stack are partially run generators that have been produced by a generator function `f` passed to `recurse`. In our example, `f` is the generator function we've obtained from `triangular` by replacing each recursive call with `yield`. One can think of this construction as `f` "returning" to the loop instead of calling itself recursively and the loop orchestrating the proper flow of calls to `f`.
 
-    println!("The recursive version will blow the stack soon...");
-    assert_eq!(triangular(LARGE), LARGE * (LARGE + 1) / 2);
+```rust
+pub fn recurse<Arg, Res, Gen>(
+    f: impl Fn(Arg) -> Gen
+) -> impl Fn(Arg) -> Res
+where
+    Res: Default,
+    Gen: Generator<Res, Yield = Arg, Return = Res> + Unpin,
+{
+    move |arg: Arg| {
+        let mut stack = Vec::new();
+        let mut current = f(arg);
+        let mut res = Res::default();
+
+        loop {
+            match Pin::new(&mut current).resume(res) {
+                GeneratorState::Yielded(arg) => {
+                    stack.push(current);
+                    current = f(arg);
+                    res = Res::default();
+                }
+                GeneratorState::Complete(real_res) => {
+                    match stack.pop() {
+                        None => return real_res,
+                        Some(top) => {
+                            current = top;
+                            res = real_res;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 ```
 
+
+# Conclusion
+
+This is it! This is the whole technique. I must admit I was quite astonished by the effectiveness of such a seemingly simple idea.
+
+However, the presentation of a technique of such generality often raises more questions than it answers and it is no different here. A few question that come mind immediately are: Does it work in all cases, like in the presence of mutable references? In which directions can it be further generalized, to mutually recursive functions for example? And what about performance? Although I know that the answer to the first question is "yes" and already have some indications regarding the others, I won't go into any details here but rather do so in future blog posts.
+
+Regarding performance, I have some preliminary numbers which make me quite optimistic. The iterative version of Tarjan's algorithm produced using this technique seems to be less than 5% slower than the recursive version. For the [Ackermann function][ackermann_function], which does barely anything besides making recursive calls, the slowdown is under 25%. To get the full picture we need a lot more benchmarks and performance tunings though.
+
+If it turns out that the range of recursive functions to which this technique can be applied with acceptable performance implications is big enough, it will probably make sense to turn this technique into a library that can easily be used by everybody. My grand vision in this direction is to provide a package containing an attribute macro `#[stack_safe]` that can be slapped onto any recursive function to transform it into an iterative function. If I, or hopefully we, achieve this in combination with good performance and Rust's generators get finally stabilized, I would be tempted to describe the outcome as **"Stack-safety for free!"**
+
+
+# Links
+
+The following links provide uninterrupted and self-contained versions of the code shown in this blog post and translations into other languages.
+
+* [Rust Playground][playground_rs]
+* [Python Playground][playground_py]
+* [JSFiddle][playground_js]
+* [GitHub Gist with Rust code][gist_rs]
+* [GitHub Gist with Python code][gist_py]
+* [GitHub Gist with JavaScript code][gist_js]
+
+
+
+[^stack_overflow]: While I worked on the smart contract language [Daml][daml] at [Digital Asset][digital_asset], we had to deal with so many stack overflows caused by recursive traversals of deep abstract syntax trees in execution environments we had no control over that it has become almost second nature to me to blame the recursion and not the stack limits for the overflows.
+[^hacking_python]: Although I generally prefer strongly typed programming languages, I didn't want any type checker to get in my way while exploring this question.
+
+
 [tarjans_algorithm]: https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
-[generator]: https://en.wikipedia.org/wiki/Generator_(computer_programming)
-[coroutine]: https://en.wikipedia.org/wiki/Coroutine
+[generators]: https://en.wikipedia.org/wiki/Generator_(computer_programming)
+[coroutines]: https://en.wikipedia.org/wiki/Coroutine
+[generators_docs_py]: https://docs.python.org/3/reference/expressions.html?highlight=send#yield-expressions
+[rust_nightly]: https://rust-lang.github.io/rustup/concepts/channels.html
+[triangular_numbers]: https://en.wikipedia.org/wiki/Triangular_number
+[proc_attr_macro]: https://doc.rust-lang.org/reference/procedural-macros.html#attribute-macros
+[ackermann_function]: https://en.wikipedia.org/wiki/Ackermann_function
+[daml]: https://daml.com
+[digital_asset]: https://www.digitalasset.com
+[playground_rs]: xxx
+[playground_py]: xxx
+[playground_js]: xxx
+[gist_rs]: https://gist.github.com/hurryabit/972be7d92fa7359ebb068b29d9e95a3b
+[gist_py]: xxx
+[gist_js]: xxx

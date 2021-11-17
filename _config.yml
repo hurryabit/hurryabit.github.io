@@ -61,28 +61,29 @@ author:
   name   : "Martin Huschenbett"
   avatar : "/assets/images/bike.jpeg"
   bio    : "I like safe programming languages."
+  location: "Zurich, Switzerland"
+  links:
+    - label: "hurryabit.github.io"
+      icon: "fas fa-fw fa-link"
+      url: &website_url "https://hurryabit.github.io/"
+    - label: "@hurryabit"
+      icon: "fab fa-fw fa-github"
+      url: &github_url "https://github.com/hurryabit"
+    - label: "@hurryabit"
+      icon: "fab fa-fw fa-twitter-square"
+      url: &twitter_url "https://twitter.com/hurryabit"
+
+footer:
   links:
     - label: "Website"
       icon: "fas fa-fw fa-link"
-      url: "https://hurryabit.github.io/"
+      url: *website_url
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/hurryabit"
+      url: *github_url
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/hurryabit"
-
-# footer:
-#   links:
-#     - label: "Website"
-#       icon: "fas fa-fw fa-link"
-#       # url: "https://hurryabit.github.io/"
-#     - label: "GitHub"
-#       icon: "fab fa-fw fa-github"
-#       # url: "https://github.com/hurryabit"
-#     - label: "Twitter"
-#       icon: "fab fa-fw fa-twitter-square"
-#       url: "https://twitter.com/hurryabit"
+      url: *twitter_url
 
 defaults:
   # _posts
@@ -95,7 +96,7 @@ defaults:
       read_time: true
       comments: true
       share: true
-      related: true
+      related: false
   # _pages
   - scope:
       path: "_pages"
