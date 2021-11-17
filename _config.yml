@@ -15,9 +15,9 @@
 # in the templates via {{ site.myvariable }}.
 title: "@hurryabit's blog"
 # description: "Blogging about programming languages and stuff..."
-# name: "Martin Huschenbett"
-# url: "https://hurryabit.github.io/"
-# email: "martin.huschenbett@posteo.me"
+name: "Martin Huschenbett"
+url: "https://hurryabit.github.io"
+email: "martin.huschenbett@posteo.me"
 twitter:
   username: "hurryabit"
 # github_username: hurryabit
@@ -32,6 +32,15 @@ permalink: /:categories/:title/
 paginate: 10 # amount of posts to show
 paginate_path: /page:num/
 timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+repository: "hurryabit/hurryabit.github.io"
+
+comments:
+  provider: "utterances"
+  utterances:
+    theme: "github-light" # "github-dark"
+    issue_term: "pathname"
+    label: "comment" # Optional - must be existing label.
 
 include:
   - _pages
@@ -60,12 +69,12 @@ plugins:
 author:
   name   : "Martin Huschenbett"
   avatar : "/assets/images/bike.jpeg"
-  bio    : "I like safe programming languages."
+  bio    : "Programmer and cyclist."
   location: "Zurich, Switzerland"
   links:
     - label: "hurryabit.github.io"
       icon: "fas fa-fw fa-link"
-      url: &website_url "https://hurryabit.github.io/"
+      url: &website_url "https://hurryabit.github.io"
     - label: "@hurryabit"
       icon: "fab fa-fw fa-github"
       url: &github_url "https://github.com/hurryabit"
