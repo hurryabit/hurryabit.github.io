@@ -101,13 +101,13 @@ where
 
 # Conclusion
 
-This is it! This is the whole technique. I must admit I was quite astonished by the effectiveness of such a seemingly simple idea.
-
-However, the presentation of a technique of such generality often raises more questions than it answers and it is no different here. A few question that come mind immediately are: Does it work in all cases, like in the presence of mutable references? In which directions can it be further generalized, to mutually recursive functions for example? And what about performance? Although I know that the answer to the first question is "yes" and already have some indications regarding the others, I won't go into any details here but rather do so in future blog posts.
+The presentation of a technique that general often raises more questions than it answers. A few question that come mind immediately: Does it work in all cases, like in the presence of mutable references? In which directions can it be further generalized, to mutually recursive functions for example? And what about performance? Although I know that it can be made to work with mutable references and have an idea for how to make it work with mutual recursion, I won't go into any details here but rather do so in future blog posts.
 
 Regarding performance, I have some preliminary numbers which make me quite optimistic. The iterative version of Tarjan's algorithm produced using this technique seems to be less than 5% slower than the recursive version. For the [Ackermann function][ackermann_function], which does barely anything besides making recursive calls, the slowdown is under 25%. To get the full picture we need a lot more benchmarks and performance tunings though.
 
-If it turns out that the range of recursive functions to which this technique can be applied with acceptable performance implications is big enough, it will probably make sense to turn this technique into a library that can easily be used by everybody. My grand vision in this direction is to provide a package containing an attribute macro `#[stack_safe]` that can be slapped onto any recursive function to transform it into an iterative function. If I, or hopefully we, achieve this in combination with good performance and Rust's generators get finally stabilized, I would be tempted to describe the outcome as **"Stack-safety for free!"**
+If it turns out that the range of recursive functions to which this technique can be applied with acceptable performance implications is big enough, I intend to make an implementation of this idea easily available to everybody on [crates.io][crates_io]. My grand vision in this direction is to provide an attribute macro `#[stack_safe]` that can be slapped onto any recursive function to automatically transform it into an iterative function.
+
+If all stars align and we achieve acceptable performance, manage to implement such a macro and land generators in Rust stable, we will be able to boldly claim Rust provides **"Stack-safety for free!"**
 
 
 # Links
@@ -134,6 +134,7 @@ The following links provide uninterrupted and self-contained versions of the cod
 [triangular_numbers]: https://en.wikipedia.org/wiki/Triangular_number
 [proc_attr_macro]: https://doc.rust-lang.org/reference/procedural-macros.html#attribute-macros
 [ackermann_function]: https://en.wikipedia.org/wiki/Ackermann_function
+[crates_io]: https://crates.io
 [daml]: https://daml.com
 [digital_asset]: https://www.digitalasset.com
 [playground_rs]: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=e65754f88ec096383ea697740de285bc
