@@ -16,13 +16,20 @@
 title: "@hurryabit's blog"
 # description: "Blogging about programming languages and stuff..."
 name: "Martin Huschenbett"
-url: "https://hurryabit.github.io"
+url: &website_url "https://hurryabit.github.io"
 email: "martin.huschenbett@posteo.me"
 twitter:
   username: "hurryabit"
 # github_username: hurryabit
 minimal_mistakes_skin: air
 search: true
+search_full_content: true
+
+social:
+  links:
+    - &github_url "https://github.com/hurryabit"
+    - &twitter_url "https://twitter.com/hurryabit"
+
 
 # Build settings
 markdown: kramdown
@@ -77,13 +84,13 @@ author:
   links:
     - label: "hurryabit.github.io"
       icon: "fas fa-fw fa-link"
-      url: &website_url "https://hurryabit.github.io"
+      url: *website_url
     - label: "@hurryabit"
       icon: "fab fa-fw fa-github"
-      url: &github_url "https://github.com/hurryabit"
+      url: *github_url
     - label: "@hurryabit"
       icon: "fab fa-fw fa-twitter-square"
-      url: &twitter_url "https://twitter.com/hurryabit"
+      url: *twitter_url
 
 footer:
   links:
