@@ -42,6 +42,8 @@ comments:
     issue_term: "pathname"
     label: "comment" # Optional - must be existing label.
 
+google_site_verification: "wKNf3uNWnmB9lmD1DT5zcOdKqlF0e9jw6ExC_rdSwUs"
+
 include:
   - _pages
 
@@ -65,6 +67,7 @@ plugins:
   - jekyll-feed
   - jemoji
   - jekyll-include-cache
+  - jekyll-seo-tag
 
 author:
   name   : "Martin Huschenbett"
