@@ -113,6 +113,7 @@ If all stars align and we achieve acceptable performance, manage to implement su
 
 # Links
 
+* [GitHub repository][github_repo] containing my experiments with the idea
 * [Reddit post][reddit_post] with some interesting comments
 
 The following links provide uninterrupted and self-contained versions of the code shown in this blog post and translations into other languages.
@@ -141,6 +142,7 @@ The following links provide uninterrupted and self-contained versions of the cod
 [daml]: https://daml.com
 [digital_asset]: https://www.digitalasset.com
 [reddit_post]: https://www.reddit.com/r/rust/comments/qwr270/stacksafety_for_free/
+[github_repo]: https://github.com/hurryabit/stack-safe-rs
 [playground_rs]: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=83ff4a0be43de2b85822ad9991d7583d
 [playground_py]: https://www.online-python.com/yhrfWJkqz3
 [playground_js]: https://www.typescriptlang.org/play?strict=false&noImplicitAny=false&strictNullChecks=false#code/PTAEBUAsEsGdQA4BsCGBPA5gJwPYFcA7AE1AGMcCAXFaA+SyAU1ACkUA3FAZVK2gUqh2jLLGgVQOAGagGzckWZTcAW1lNQAIyQ4MiHLEoAoEKEiVKCWAC4QkPFixoUm6JQB0GN-c3vxwbV1gQxRSAGsAWlgUKUZKNAipHCxErEZGYCMpQlJKcQJZPhQCDDxULAAKAgBKUABvI1Am0GgZKtAAXg7QAAZahubB0DTKBwKegG5G5oBfUEYkWGYBoaaRsdACgGpC6GLS8vaI0ABGaqnBmaMrrJy8iTTSByWKqX7ppuyCXPzQFTwAPpSCooLAYd6rJrkOiCELhTqgADaAF0LpCkHEyA40lQEcDQeC0asMYI0vBuoRFFJaIwiFMPkMAO4wDGgCqULB4RgQyGDaGGeqgIgURgAGiEKCQXNAc26T0cjCo7gIjAAHpQKmTzgzea02QBCYUqnm81ZwsLuBB4WCQCrynGUbWmyH2xWCbrAzhS7lE53NMkIymMakquk6yFzBZLerh516irm9wYkoMUAAPl6Jr9q1duO6iYQOAQFSd2chAe6Xq5vuzkcWy1jZfWWAKVcYNb9V1rja7syMDObBX+QKmN35gg5exKZVBAOisQRj2ejFed3yACo2TUY4N4wUupmd+W4htJgy69GVqtB5tQDsKmhoAsSEdTtVS00rjNtUZx6AADIAIIAEoAOIAKIIicPQ9ACMFnvyOAYu4pAYqCJb0vGk77DOWBzjEK5AWB4G1Pq3RERBoCbhUFGQTsZygGAABMWYMLgjKgOBjjJBUABEAAG2HTuU+GxPxZA4CoVqULSoCMrgJQSt67i8dqVyIchOgYHxglFMJs7zow4mQCg8AEDggg4MIWBSDojKyW48CJqp9IaYwSa6DpQkHKC4mMtASBIJI1m2TgHGOaA5qRTgFDuHFLlGByaBHk03m4TRIEQR+6jsZx3GVAJaXlMZpmbBZwUiKF9kkBFzlqWQKCUKQkBsmqpBZvGbXuCojCwNEGDubQqF4IosB8aQkpBeaqlZnyFCwEh7laV5ek+VgJXwFZlV2Q5lBOdQ4QqdU57zPWKVDGxYXzKqpC+l+RhAA
