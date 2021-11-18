@@ -1,8 +1,7 @@
 ---
 title: "Stack-safety for free?"
-description: "I demonstrate how generators/coroutines can be (ab)used to transform any recursive function into an iterative function with nearly zero code changes."
+description: "I demonstrate how to (ab)use generators to transform any recursive function into an iterative one with nearly zero code changes."
 header:
-    # image: /assets/images/binomial-stack-safe.png
     teaser: /assets/images/binomial-stack-safe.png
 category: Blog
 tags: Rust Python JavaScript PLDesign
@@ -10,7 +9,7 @@ tags: Rust Python JavaScript PLDesign
 related: false
 ---
 
-**tl;dr.** I demonstrate how generators/coroutines can be (ab)used to transform any recursive function into an iterative function with _nearly zero_ code changes. I explain the technique using a small example written in Rust, which can also be found on the [Rust Playground][playground_rs] and in a [GitHub Gist][gist_rs]. You can find links to implementations of the same example in Python and JavaScript in the [Links](#links) section at the end.
+**tl;dr.** I demonstrate how to (ab)use generators/coroutines to transform any recursive function into an iterative function with nearly zero code changes. I explain the technique using a small example written in Rust, which can also be found on the [Rust Playground][playground_rs] and in a [GitHub Gist][gist_rs]. You can find links to implementations of the same example in Python and JavaScript in the [Links](#links) section at the end.
 
 If you are in a rush, you could skip the introduction and immediately jump to the [implementation](#implementation).
 
@@ -139,7 +138,7 @@ The following links provide uninterrupted and self-contained versions of the cod
 [crates_io]: https://crates.io
 [daml]: https://daml.com
 [digital_asset]: https://www.digitalasset.com
-[playground_rs]: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=e65754f88ec096383ea697740de285bc
+[playground_rs]: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=83ff4a0be43de2b85822ad9991d7583d
 [playground_py]: https://www.online-python.com/yhrfWJkqz3
 [playground_js]: https://www.typescriptlang.org/play?strict=false&noImplicitAny=false&strictNullChecks=false#code/PTAEBUAsEsGdQA4BsCGBPA5gJwPYFcA7AE1AGMcCAXFaA+SyAU1ACkUA3FAZVK2gUqh2jLLGgVQOAGagGzckWZTcAW1lNQAIyQ4MiHLEoAoEKEiVKCWAC4QkPFixoUm6JQB0GN-c3vxwbV1gQxRSAGsAWlgUKUZKNAipHCxErEZGYCMpQlJKcQJZPhQCDDxULAAKAgBKUABvI1Am0GgZKtAAXg7QAAZahubB0DTKBwKegG5G5oBfUEYkWGYBoaaRsdACgGpC6GLS8vaI0ABGaqnBmaMrrJy8iTTSByWKqX7ppuyCXPzQFTwAPpSCooLAYd6rJrkOiCELhTqgADaAF0LpCkHEyA40lQEcDQeC0asMYI0vBuoRFFJaIwiFMPkMAO4wDGgCqULB4RgQyGDaGGeqgIgURgAGiEKCQXNAc26T0cjCo7gIjAAHpQKmTzgzea02QBCYUqnm81ZwsLuBB4WCQCrynGUbWmyH2xWCbrAzhS7lE53NMkIymMakquk6yFzBZLerh516irm9wYkoMUAAPl6Jr9q1duO6iYQOAQFSd2chAe6Xq5vuzkcWy1jZfWWAKVcYNb9V1rja7syMDObBX+QKmN35gg5exKZVBAOisQRj2ejFed3yACo2TUY4N4wUupmd+W4htJgy69GVqtB5tQDsKmhoAsSEdTtVS00rjNtUZx6AADIAIIAEoAOIAKIIicPQ9ACMFnvyOAYu4pAYqCJb0vGk77DOWBzjEK5AWB4G1Pq3RERBoCbhUFGQTsZygGAABMWYMLgjKgOBjjJBUABEAAG2HTuU+GxPxZA4CoVqULSoCMrgJQSt67i8dqVyIchOgYHxglFMJs7zow4mQCg8AEDggg4MIWBSDojKyW48CJqp9IaYwSa6DpQkHKC4mMtASBIJI1m2TgHGOaA5qRTgFDuHFLlGByaBHk03m4TRIEQR+6jsZx3GVAJaXlMZpmbBZwUiKF9kkBFzlqWQKCUKQkBsmqpBZvGbXuCojCwNEGDubQqF4IosB8aQkpBeaqlZnyFCwEh7laV5ek+VgJXwFZlV2Q5lBOdQ4QqdU57zPWKVDGxYXzKqpC+l+RhAA
 [gist_rs]: https://gist.github.com/hurryabit/972be7d92fa7359ebb068b29d9e95a3b
