@@ -1,5 +1,9 @@
 ---
 title: "Stack-safety for free?"
+description: "I demonstrate how generators/coroutines can be (ab)used to transform any recursive function into an iterative function with nearly zero code changes."
+header:
+    # image: /assets/images/binomial-stack-safe.png
+    teaser: /assets/images/binomial-stack-safe.png
 category: Blog
 tags: Rust Python JavaScript PLDesign
 # classes: wide
@@ -47,19 +51,17 @@ The result of this transformation is the function `triangular_safe` below, which
 
 ```rust
 fn triangular_safe(n: u64) -> u64 {
-    recurse(|n: u64| {
-        move |_: u64| {
-            if n == 0 {
-                0
-            } else {
-                n + yield (n - 1)
-            }
+    recurse(|n| move |_| {
+        if n == 0 {
+            0
+        } else {
+            n + yield (n - 1)
         }
     })(n)
 }
 ```
 
-Despite some minor boilerplate introduced by Rust's syntax for generators, namely the `move |_: u64| { ... }` part, it should be quite clear how we got from `triangular` to `triangular_safe`. Ultimately, this transformation could be implemented by a [procedural attribute macro][proc_attr_macro] in Rust.
+Despite some minor boilerplate introduced by Rust's syntax for generators, namely the `move |_|` bit, it should be quite clear how we got from `triangular` to `triangular_safe`. Ultimately, this transformation could be implemented by a [procedural attribute macro][proc_attr_macro] in Rust.
 
 The final piece of the technique is the higher-order function `recurse`. It is important to understand that `recurse` cannot only handle `triangular` but rather all recursive functions of some type `fn(A) -> B`, where `A` doesn't contain any mutable references. Roughly speaking, `recurse` implements the general approach of "simulate the call stack in the heap and run one big loop" mentioned above. The elements of this simulated stack are partially run generators that have been produced by a generator function `f` passed to `recurse`. In our example, `f` is the generator function we've obtained from `triangular` by replacing each recursive call with `yield`. One can think of this construction as `f` "returning" to the loop instead of calling itself recursively and the loop orchestrating the proper flow of calls to `f`.
 
