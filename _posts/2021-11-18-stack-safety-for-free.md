@@ -29,7 +29,7 @@ Since then, I've played with the idea a lot. I got more complex and bigger examp
 
 The basic idea behind the technique to transform recursion into iteration is surprisingly simple and can be implemented in any language that supports generators. I've chosen to use Rust here since convincing its very rigid type and borrow checkers of my idea increases me confidence that the idea is sound. In fact, we need to use [Rust nightly][rust_nightly] because generators are not stable yet.
 
-We use a small recursive function `triangular`, which computes [triangular numbers][triangular_numbers], as an example to demonstrate the technique. Although this is surely not the sort of function where one would resort to general techniques, its simplicity allows us to focus on the transformation itself rather than being distracted by unrelated complexity. An uninterrupted and self-contained version of the code shown in this blog post can be found on the [Rust Playground][playground_rs] in a [GitHub Gist][gist_rs].
+We use a small recursive function `triangular`, which computes [triangular numbers][triangular_numbers], as an example to demonstrate the technique. Note that `triangular` is _not_ tail recursive. Although this is surely not the sort of function where one would resort to general techniques, its simplicity allows us to focus on the transformation itself rather than being distracted by unrelated complexity. An uninterrupted and self-contained version of the code shown in this blog post can be found on the [Rust Playground][playground_rs] in a [GitHub Gist][gist_rs].
 
 ```rust
 fn triangular(n: u64) -> u64 {
@@ -44,13 +44,13 @@ fn triangular(n: u64) -> u64 {
 In order to transform `triangular` into an iterative function, we only need to perform two simple steps:
 
 1. Replace every recursive call to `triangular` by a `yield` expression.
-1. Wrap the resulting _generator function_ into the higher-order function `recurse`, which we will discuss below.
+1. Wrap the resulting _generator function_ into the higher-order function `trampoline`, which we will discuss below.
 
 The result of this transformation is the function `triangular_safe` below, which computes the same values as `triangular` but does so without overflowing the stack, even for large input values `n`. In other words, `triangular_safe` is a stack-safe version of `triangular`.
 
 ```rust
 fn triangular_safe(n: u64) -> u64 {
-    recurse(|n| move |_| {
+    trampoline(|n| move |_| {
         if n == 0 {
             0
         } else {
@@ -62,10 +62,10 @@ fn triangular_safe(n: u64) -> u64 {
 
 Despite some minor boilerplate introduced by Rust's syntax for generators, namely the `move |_|` bit, it should be quite clear how we got from `triangular` to `triangular_safe`. Ultimately, this transformation could be implemented by a [procedural attribute macro][proc_attr_macro] in Rust.
 
-The final piece of the technique is the higher-order function `recurse`. It is important to understand that `recurse` cannot only handle `triangular` but rather all recursive functions of some type `fn(A) -> B`, where `A` doesn't contain any mutable references. Roughly speaking, `recurse` implements the general approach of "simulate the call stack in the heap and run one big loop" mentioned above. The elements of this simulated stack are partially run generators that have been produced by a generator function `f` passed to `recurse`. In our example, `f` is the generator function we've obtained from `triangular` by replacing each recursive call with `yield`. One can think of this construction as `f` "returning" to the loop instead of calling itself recursively and the loop orchestrating the proper flow of calls to `f`.
+The final piece of the technique is the higher-order function `trampoline`.[^trampoline] It is important to understand that `trampoline` cannot only handle `triangular` but rather all recursive functions of some type `fn(A) -> B`, where `A` doesn't contain any mutable references, regardless of whether they are tail recursive or not. Roughly speaking, `trampoline` implements the general approach of "simulate the call stack in the heap and run one big loop" mentioned above. The elements of this simulated stack are partially run generators that have been produced by a generator function `f` passed to `trampoline`. In our example, `f` is the generator function we've obtained from `triangular` by replacing each recursive call with `yield`. One can think of this construction as `f` "returning" to the loop instead of calling itself recursively and the loop orchestrating the proper flow of calls to `f`.
 
 ```rust
-fn recurse<Arg, Res, Gen>(
+fn trampoline<Arg, Res, Gen>(
     f: impl Fn(Arg) -> Gen
 ) -> impl Fn(Arg) -> Res
 where
@@ -128,6 +128,7 @@ The following links provide uninterrupted and self-contained versions of the cod
 
 [^stack_overflow]: While I worked on the smart contract language [Daml][daml] at [Digital Asset][digital_asset], we had to deal with so many stack overflows caused by recursive traversals of deep abstract syntax trees in execution environments we had no control over that it has become almost second nature to me to blame the recursion and not the stack limits for the overflows.
 [^hacking_python]: Although I generally prefer strongly typed programming languages, I didn't want any type checker to get in my way while exploring this question.
+[^trampoline]: In the initial version of this blog post, `trampoline` was called `recurse`. As [anydalch pointed out on Reddit][reddit_trampoline] such a function is known as a [trampoline][wiki_trampoline] in programming. Hence the change in name.
 
 
 [tarjans_algorithm]: https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
@@ -142,10 +143,12 @@ The following links provide uninterrupted and self-contained versions of the cod
 [daml]: https://daml.com
 [digital_asset]: https://www.digitalasset.com
 [reddit_post]: https://www.reddit.com/r/rust/comments/qwr270/stacksafety_for_free/
+[reddit_trampoline]: https://www.reddit.com/r/rust/comments/qwr270/comment/hl5lihl/?utm_source=share&utm_medium=web2x&context=3
+[wiki_trampoline]: https://en.wikipedia.org/wiki/Trampoline_%28computing%29
 [github_repo]: https://github.com/hurryabit/stack-safe-rs
-[playground_rs]: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=83ff4a0be43de2b85822ad9991d7583d
-[playground_py]: https://www.online-python.com/yhrfWJkqz3
-[playground_js]: https://www.typescriptlang.org/play?strict=false&noImplicitAny=false&strictNullChecks=false#code/PTAEBUAsEsGdQA4BsCGBPA5gJwPYFcA7AE1AGMcCAXFaA+SyAU1ACkUA3FAZVK2gUqh2jLLGgVQOAGagGzckWZTcAW1lNQAIyQ4MiHLEoAoEKEiVKCWAC4QkPFixoUm6JQB0GN-c3vxwbV1gQxRSAGsAWlgUKUZKNAipHCxErEZGYCMpQlJKcQJZPhQCDDxULAAKAgBKUABvI1Am0GgZKtAAXg7QAAZahubB0DTKBwKegG5G5oBfUEYkWGYBoaaRsdACgGpC6GLS8vaI0ABGaqnBmaMrrJy8iTTSByWKqX7ppuyCXPzQFTwAPpSCooLAYd6rJrkOiCELhTqgADaAF0LpCkHEyA40lQEcDQeC0asMYI0vBuoRFFJaIwiFMPkMAO4wDGgCqULB4RgQyGDaGGeqgIgURgAGiEKCQXNAc26T0cjCo7gIjAAHpQKmTzgzea02QBCYUqnm81ZwsLuBB4WCQCrynGUbWmyH2xWCbrAzhS7lE53NMkIymMakquk6yFzBZLerh516irm9wYkoMUAAPl6Jr9q1duO6iYQOAQFSd2chAe6Xq5vuzkcWy1jZfWWAKVcYNb9V1rja7syMDObBX+QKmN35gg5exKZVBAOisQRj2ejFed3yACo2TUY4N4wUupmd+W4htJgy69GVqtB5tQDsKmhoAsSEdTtVS00rjNtUZx6AADIAIIAEoAOIAKIIicPQ9ACMFnvyOAYu4pAYqCJb0vGk77DOWBzjEK5AWB4G1Pq3RERBoCbhUFGQTsZygGAABMWYMLgjKgOBjjJBUABEAAG2HTuU+GxPxZA4CoVqULSoCMrgJQSt67i8dqVyIchOgYHxglFMJs7zow4mQCg8AEDggg4MIWBSDojKyW48CJqp9IaYwSa6DpQkHKC4mMtASBIJI1m2TgHGOaA5qRTgFDuHFLlGByaBHk03m4TRIEQR+6jsZx3GVAJaXlMZpmbBZwUiKF9kkBFzlqWQKCUKQkBsmqpBZvGbXuCojCwNEGDubQqF4IosB8aQkpBeaqlZnyFCwEh7laV5ek+VgJXwFZlV2Q5lBOdQ4QqdU57zPWKVDGxYXzKqpC+l+RhAA
+[playground_rs]: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=6d0677b262443a8e0f1b1d7fd193434f
+[playground_py]: https://www.online-python.com/KXmLvup8J6
+[playground_js]: https://www.typescriptlang.org/play?strict=false&noImplicitAny=false&strictNullChecks=false#code/PTAEBUAsEsGdQA4BsCGBPA5gJwPYFcA7AE1AGMcCAXFaA+SyAU1ACkUA3FAZVK2gUqh2jLLGgVQOAGagGzckWZTcAW1lNQAIyQ4MiHLEoAoEKEiVKCWAC4QkPFixoUm6JQB0GN-c3vxwbV1gQxRSAGsAWlgUKUZKNAipHCxErEZGYCMpQlJKcQJZPhQCDDxULAAKAgBKUABvI1Am0GgZKtAAXg7QAAZahubB0DTKBwKegG5G5oBfUEYkWGYBoaaRsdACgGpC6GLS8vaI0ABGaqnBmaMrrJy8iUosFBUEHCRaRgqpfumm7IJcvlQCo8AB9KQVFBYDA-VZNch0QQhcKdUAAbQAuhc4Ug4mQHGkqKiIVCYdjVrjBGl4N1CIopB8iFNfkMAO4wXGgCqPPCMWFwwYIwz1UBECiMAA0QhQSF5oDm3VIBMYVHcBEYAA9KBVqecWQLWlyAIRi9X8gWrZFhdwIPCwSAVJWOFWUPUWuFOwmCboQziyvnk93NamoumMBnqpn6uFzBZLerR92GipW9y4koMUAAPl65qDq09LtRqdeCAqbvzcJD3T9vMD+dji2Wicr6ywBVrjHrQauDZbvdmRhZbYKIPBUxuQsEjz2JTKUNB0ViqMez1e73VXzu+QAVFyagnBsmCl1c4eq3ENpMWY34ytViPNqAdhU0NAFiQjqdqhWmlcZnqRhTqAAAyACCABKADiACiqInD0PSgoh15Cm8jDuKQuJQuWzLJjO+zzlgi4xJ84HQTBtRGt05GwaAe4VLRcE7GcoBgAATHmDC4KyoAwY4yQVAARAABgRc7lCRsQiWQOAvHglCMCQrK4CU0r+u4Ql6lcaG4mmujCWJRQSQuS6MDJkAoPABA4IIODCFgUg6KySktJQ8CplpzK6RhOgYIZ4kHFCMmstASBIJIDlOTgvFuB51AorAOAUO4qVeUYjxoOeTSBURjGQbBv7qDxfECZUom5eUFlWZstmRSI0UuSQcWgJ52lkCglCkJAXKaqQebJn17gqIwsDRBgGG0FheCKLAwmkDKEVWlpeaChQSV6X5AXGUFWDVfA9kNc5rktW1N7zE22VDNxMXzBqpCBv+RhAA
 [gist_rs]: https://gist.github.com/hurryabit/972be7d92fa7359ebb068b29d9e95a3b
 [gist_py]: https://gist.github.com/hurryabit/a7213d9c8d059c31f51686bd66691592
 [gist_js]: https://gist.github.com/hurryabit/76a59348e9f4445f82d93fa75cba2582
