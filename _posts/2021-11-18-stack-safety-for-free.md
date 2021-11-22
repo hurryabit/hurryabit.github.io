@@ -9,6 +9,15 @@ tags: Rust Python JavaScript PLDesign
 related: false
 ---
 
+<script>
+GIST_CUTS = [
+    /^fn triangular\b/,
+    /^fn triangular_safe/,
+    /^fn trampoline/,
+];
+</script>
+
+
 **tl;dr.** I demonstrate how to (ab)use generators/coroutines to transform any recursive function into an iterative function with nearly zero code changes. I explain the technique using a small example written in Rust, which can also be found on the [Rust Playground][playground_rs] and in a [GitHub Gist][gist_rs]. You can find links to implementations of the same example in Python and JavaScript in the [Links](#links) section at the end.
 
 If you are in a rush, you could skip the introduction and immediately jump to the [implementation](#implementation).
@@ -31,15 +40,7 @@ The basic idea behind the technique to transform recursion into iteration is sur
 
 We use a small recursive function `triangular`, which computes [triangular numbers][triangular_numbers], as an example to demonstrate the technique. Note that `triangular` is _not_ tail recursive. Although this is surely not the sort of function where one would resort to general techniques, its simplicity allows us to focus on the transformation itself rather than being distracted by unrelated complexity. An uninterrupted and self-contained version of the code shown in this blog post can be found on the [Rust Playground][playground_rs] in a [GitHub Gist][gist_rs].
 
-```rust
-fn triangular(n: u64) -> u64 {
-    if n == 0 {
-        0
-    } else {
-        n + triangular(n - 1)
-    }
-}
-```
+{% gist hurryabit/972be7d92fa7359ebb068b29d9e95a3b %}
 
 In order to transform `triangular` into an iterative function, we only need to perform two simple steps:
 
@@ -48,56 +49,13 @@ In order to transform `triangular` into an iterative function, we only need to p
 
 The result of this transformation is the function `triangular_safe` below, which computes the same values as `triangular` but does so without overflowing the stack, even for large input values `n`. In other words, `triangular_safe` is a stack-safe version of `triangular`.
 
-```rust
-fn triangular_safe(n: u64) -> u64 {
-    trampoline(|n| move |_| {
-        if n == 0 {
-            0
-        } else {
-            n + yield (n - 1)
-        }
-    })(n)
-}
-```
+{% gist hurryabit/972be7d92fa7359ebb068b29d9e95a3b %}
 
 Despite some minor boilerplate introduced by Rust's syntax for generators, namely the `move |_|` bit, it should be quite clear how we got from `triangular` to `triangular_safe`. Ultimately, this transformation could be implemented by a [procedural attribute macro][proc_attr_macro] in Rust.
 
 The final piece of the technique is the higher-order function `trampoline`.[^trampoline] It is important to understand that `trampoline` cannot only handle `triangular` but rather all recursive functions of some type `fn(A) -> B`, where `A` doesn't contain any mutable references, regardless of whether they are tail recursive or not. Roughly speaking, `trampoline` implements the general approach of "simulate the call stack in the heap and run one big loop" mentioned above. The elements of this simulated stack are partially run generators that have been produced by a generator function `f` passed to `trampoline`. In our example, `f` is the generator function we've obtained from `triangular` by replacing each recursive call with `yield`. One can think of this construction as `f` "returning" to the loop instead of calling itself recursively and the loop orchestrating the proper flow of calls to `f`.
 
-```rust
-fn trampoline<Arg, Res, Gen>(
-    f: impl Fn(Arg) -> Gen
-) -> impl Fn(Arg) -> Res
-where
-    Res: Default,
-    Gen: Generator<Res, Yield = Arg, Return = Res> + Unpin,
-{
-    move |arg: Arg| {
-        let mut stack = Vec::new();
-        let mut current = f(arg);
-        let mut res = Res::default();
-
-        loop {
-            match Pin::new(&mut current).resume(res) {
-                GeneratorState::Yielded(arg) => {
-                    stack.push(current);
-                    current = f(arg);
-                    res = Res::default();
-                }
-                GeneratorState::Complete(real_res) => {
-                    match stack.pop() {
-                        None => return real_res,
-                        Some(top) => {
-                            current = top;
-                            res = real_res;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-```
+{% gist hurryabit/972be7d92fa7359ebb068b29d9e95a3b %}
 
 
 # Conclusion
