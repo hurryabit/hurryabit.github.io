@@ -7,16 +7,8 @@ category: Blog
 tags: Rust Python JavaScript PLDesign
 # classes: wide
 related: false
+# last_modified_at: 2021-11-24
 ---
-
-<script>
-GIST_CUTS = [
-    /^fn triangular\b/,
-    /^fn triangular_safe/,
-    /^fn trampoline/,
-];
-</script>
-
 
 **tl;dr.** I demonstrate how to (ab)use generators/coroutines to transform any recursive function into an iterative function with nearly zero code changes. I explain the technique using a small example written in Rust, which can also be found on the [Rust Playground][playground_rs] and in a [GitHub Gist][gist_rs]. You can find links to implementations of the same example in Python and JavaScript in the [Links](#links) section at the end.
 
@@ -110,3 +102,14 @@ The following links provide uninterrupted and self-contained versions of the cod
 [gist_rs]: https://gist.github.com/hurryabit/972be7d92fa7359ebb068b29d9e95a3b
 [gist_py]: https://gist.github.com/hurryabit/a7213d9c8d059c31f51686bd66691592
 [gist_js]: https://gist.github.com/hurryabit/76a59348e9f4445f82d93fa75cba2582
+
+
+<script>
+GIST_CUTS = [
+    /^fn triangular\b/,
+    /^fn triangular_safe/,
+    /^fn trampoline/,
+];
+</script>
+
+<!-- cSpell:ignore Ackermann Tarjan anydalch -->
