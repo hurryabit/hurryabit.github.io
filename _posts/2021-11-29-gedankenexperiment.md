@@ -4,7 +4,7 @@ description: "I'm describing a thought experiment that hopefully helps to convin
 header:
     image: /assets/images/gedankenexperiment/header.png
 category: Blog
-tags:
+tags: Thoughts COVID-19
 # classes: wide
 related: false
 # last_modified_at:
@@ -62,7 +62,7 @@ The beauty of such an argument is that the first half of the precondition is abo
 
 ## Conclusion
 
-Let's come back to COVID-19 and apply the argument to the disease and the vaccine against it. Assume choice A is to get the vaccine and choice B is to not get it. Anybody who wants to reject the argument for these specific choices, would need to argue for one of two points:[^three]
+Let's come back to COVID-19 and apply the argument to the disease and the vaccines against it. Assume choice A is to get the vaccine and choice B is to not get it. Anybody who wants to reject the argument for these specific choices, would need to argue for one of two points:[^three]
 
 1. They _know_ that getting the vaccine is more dangerous for them than not getting it.
 1. Getting the vaccine does not reduce the danger for others _at all_.

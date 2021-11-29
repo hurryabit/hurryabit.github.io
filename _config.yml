@@ -79,7 +79,7 @@ plugins:
 author:
   name   : "Martin Huschenbett"
   avatar : "/assets/images/bike.jpeg"
-  bio    : "Programmer and cyclist."
+  bio    : "Thinker, cyclist and programmer."
   location: "Zurich, Switzerland"
   links:
     - label: "hurryabit.github.io"
