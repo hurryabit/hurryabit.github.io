@@ -1,6 +1,6 @@
 ---
 title: "A gedankenexperiment on vaccination"
-description: "I'm describing a gedankenexperiment that hopefully helps to convince people to get vaccinated against COVID-19 despite all the uncertainties surrounding the topic."
+description: "I'm describing a thought experiment that hopefully helps to convince people to get vaccinated despite feeling uncertain about some aspects of COVID-19."
 header:
     image: /assets/images/gedankenexperiment/header.png
 category: Blog
@@ -10,7 +10,7 @@ related: false
 # last_modified_at:
 ---
 
-**tl;dr.** I'm describing a gedankenexperiment that hopefully helps to convince people to get vaccinated against COVID-19 despite all the uncertainties surrounding the topic.
+**tl;dr.** I'm describing a thought experiment that hopefully helps to convince people to get vaccinated despite feeling uncertain about some aspects of COVID-19.
 
 
 ## Motivation
