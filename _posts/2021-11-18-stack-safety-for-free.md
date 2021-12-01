@@ -15,7 +15,7 @@ related: false
 If you are in a rush, you could skip the introduction and immediately jump to the [implementation](#implementation).
 
 
-# Introduction
+## Introduction
 
 During my recent preparation for coding interviews, I came across a problem where part of the solution was to determine all strongly connected components of a directed graph. I decided to compute these components using [Tarjan's algorithm][tarjans_algorithm], which is basically a glorified depth-first search through the graph. Unfortunately for me, the test inputs on the coding platform I used were so large that my _recursive_ implementation caused a stack overflow. Since I had no control over the execution environment, simply increasing the stack limits was not an option.[^stack_overflow] Thus, I started to re-implement the depth-first search in an iterative fashion.
 
@@ -26,7 +26,7 @@ At this moment, my problem turned from a quite annoying one into a really exciti
 Since then, I've played with the idea a lot. I got more complex and bigger examples to work, tried it out in other programming languages, thought about mutually recursive functions, looked into mutability and ownership, ran a lot of benchmarks, and figured out how to handle tail calls efficiently. I also started to wonder if this idea is actually well-known and I'm just reinventing the wheel or if I'm onto something. Despite my best efforts, I could not find any evidence of this idea anywhere. That's why we're here now! Although there's a lot to write about, this blog post focuses solely on the basic idea. I'll talk about everything else in future blog posts.
 
 
-# Implementation
+## Implementation
 
 The basic idea behind the technique to transform recursion into iteration is surprisingly simple and can be implemented in any language that supports generators. I've chosen to use Rust here since convincing its very rigid type and borrow checkers of my idea increases me confidence that the idea is sound. In fact, we need to use [Rust nightly][rust_nightly] because generators are not stable yet.
 
@@ -50,7 +50,7 @@ The final piece of the technique is the higher-order function `trampoline`.[^tra
 {% gist hurryabit/972be7d92fa7359ebb068b29d9e95a3b %}
 
 
-# Conclusion
+## Conclusion
 
 The presentation of a technique that general often raises more questions than it answers. A few question that come mind immediately: Does it work in all cases, like in the presence of mutable references? In which directions can it be further generalized, to mutually recursive functions for example? And what about performance? Although I know that it can be made to work with mutable references and have an idea for how to make it work with mutual recursion, I won't go into any details here but rather do so in future blog posts.
 
@@ -61,7 +61,7 @@ If it turns out that the range of recursive functions to which this technique ca
 If all stars align and we achieve acceptable performance, manage to implement such a macro and land generators in Rust stable, we will be able to boldly claim Rust provides **"Stack-safety for free!"**
 
 
-# Links
+## Links
 
 * [GitHub repository][github_repo] containing my experiments with the idea
 * [Reddit post][reddit_post] with some interesting comments
