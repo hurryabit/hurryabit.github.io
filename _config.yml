@@ -18,8 +18,6 @@ title: "@hurryabit's blog"
 name: "Martin Huschenbett"
 url: &website_url "https://hurryabit.github.io"
 email: "martin.huschenbett@posteo.me"
-twitter:
-  username: "hurryabit"
 # github_username: hurryabit
 minimal_mistakes_skin: air
 search: true
@@ -28,8 +26,6 @@ search_full_content: true
 social:
   links:
     - &github_url "https://github.com/hurryabit"
-    - &twitter_url "https://twitter.com/hurryabit"
-
 
 # Build settings
 markdown: kramdown
@@ -77,10 +73,10 @@ plugins:
   - jekyll-seo-tag
 
 author:
-  name   : "Martin Huschenbett"
-  avatar : "/assets/images/bike.jpeg"
-  bio    : "Thinker, cyclist and programmer."
-  location: "Zurich, Switzerland"
+  name: "Martin Huschenbett"
+  avatar: "/assets/images/bike.jpeg"
+  bio: "Thinker, cyclist and programmer."
+  location: "Munich, Germany"
   links:
     - label: "hurryabit.github.io"
       icon: "fas fa-fw fa-link"
@@ -88,9 +84,6 @@ author:
     - label: "@hurryabit"
       icon: "fab fa-fw fa-github"
       url: *github_url
-    - label: "@hurryabit"
-      icon: "fab fa-fw fa-twitter-square"
-      url: *twitter_url
 
 footer:
   links:
@@ -100,9 +93,6 @@ footer:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: *github_url
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: *twitter_url
 
 defaults:
   # _posts
