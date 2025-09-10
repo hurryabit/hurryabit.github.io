@@ -2,16 +2,16 @@
 title: "A gedankenexperiment on vaccination"
 description: "I'm describing a thought experiment that hopefully helps to convince people to get vaccinated despite feeling uncertain about some aspects of COVID-19."
 header:
-    image: /assets/images/gedankenexperiment/header.png
+  image: /assets/images/gedankenexperiment/header.png
 category: Blog
 tags: Thoughts COVID-19
 # classes: wide
 related: false
 # last_modified_at:
+hidden: true
 ---
 
 **tl;dr.** I'm describing a thought experiment that hopefully helps to convince people to get vaccinated despite feeling uncertain about some aspects of COVID-19.
-
 
 ## Motivation
 
@@ -20,7 +20,6 @@ Unfortunately, some in my family still refuse to get vaccinated against COVID-19
 In my experience, people who are skeptic about vaccines tend to derail discussions with lots of one-sided objections like "but the vaccine _might_ be more dangerous than the disease" or "the vaccine _might_ be more problematic for me than for the rest of the population". Even if that _might_ be the case, it _might_ also be the other way around. Having this sort of conversation where a lot of things _might_ be but neither person _knows_ enough to convince the other can be incredibly arduous.
 
 The gedankenexperiment[^gedankenexperiment] I've designed to aid my attempts to influence my family members reduces the number of facts we actually need to _know_ to a minimum and embraces that there is plenty we _don't know_. Although there are vast amounts of evidence in the specific case of COVID-19 that the vaccines against it are safe and highly effective, if we can ignore this evidence and still come to the conclusion that getting vaccinated is the right thing to do, we avoid getting bogged down in a discussion about the validity of the evidence. One could call this approach _evidence frugality_.
-
 
 ## Gedankenexperiment
 
@@ -43,7 +42,6 @@ Given all that information but nothing else, how do you decide:
 **Do you take a blue pill or a red pill?**
 {: .text-center}
 
-
 ## Interpretation
 
 I'm pretty convinced that everybody who has the slightest understanding of basic math and is not a sadist would take a blue pill if presented with this situation. The reasoning is pretty simple:
@@ -59,7 +57,6 @@ I would try to leave this door closed and instead leave the interpretation of th
 
 The beauty of such an argument is that the first half of the precondition is about not knowing and hence reasoning along these lines cannot be rejected by a counterargument of the form "but I/we don't know whether..." That's the whole point of the gedankenexperiment. And everybody who decides that a blue pill should be taken for the reasons outlined above pretty much confirms that such a line of arguing is acceptable for them.
 
-
 ## Conclusion
 
 Let's come back to COVID-19 and apply the argument to the disease and the vaccines against it. Assume choice A is to get the vaccine and choice B is to not get it. Anybody who wants to reject the argument for these specific choices, would need to argue for one of two points:[^three]
@@ -71,11 +68,9 @@ Given the data we currently have overwhelmingly shows that the vaccines are _saf
 
 Their strategy rather appeared to be to derail the discussion with plenty of one-sided objections like "the vaccine _might_ be more dangerous than the disease (in the long term)". Yes, that _might_ be, but it _might_ also be the other way around, we simply _don't know_ for sure. **And what should do we do if we don't know? We should do what's best for others and get the vaccine!**
 
-
 [^gedankenexperiment]: German is my native language and I'm always quite amused about German words that have made it into the English language unchanged. Maybe it's a bit of schadenfreude that English speakers occasionally have to deal with a word as long as a freight train, too. Thus, I'll stick with the zeitgeist here and refrain from translating the original "gedankenexperiment" into the potentially more common "thought experiment". :wink:
 [^no_pill]: Refusing to take a pill is not an option because we're in a gedankenexperiment. In real live, the action represented by taking a blue pill could be doing something and taking a red pill could stand for not doing that same thing. Hence, not taking a pill would not be an option, except for people who found a way around the [law of the excluded middle](https://en.wikipedia.org/wiki/Law_of_excluded_middle).
 [^three]: Technically, they could also reject the argument in the way it is presented by arguing that not getting the vaccine is more dangerous for them than getting it. I would happily take a discussion going down that route every single day.
 [^vaccine_dangerous]: I'm aware that there are people who have a medical condition that makes the vaccine an actual danger to them but they are very few. Those are not the people I'm trying to convince to get vaccinated anyway.
-
 
 <!-- cSpell:ignore gedankenexperiment -->
